@@ -29,13 +29,7 @@ public class CustomerServiceImpl implements CustomerService{
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Transactional(readOnly = false)
     public void addCustomer(Customer customer) {
-    	if (getCustomerById(customer.getId()) == null) {
     		getCustomerDAO().addCustomer(customer);
-    	}
-    	else {
-    		deleteCustomer(customer);
-    		addCustomer(customer);
-    	}
     }
 
     @Transactional(readOnly = false)

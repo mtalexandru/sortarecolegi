@@ -8,11 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
 
+import org.apache.log4j.Logger;
 import org.primefaces.event.RowEditEvent;
 import org.springframework.dao.DataAccessException;
 
@@ -26,15 +28,27 @@ import spring.service.CustomerService;
 @ManagedBean(name="customerMB")
 @RequestScoped
 public class CustomerManagedBean implements Serializable {
+	
+	static Logger log = Logger.getLogger(
+			CustomerManagedBean.class.getName());
 
     private static final long serialVersionUID = 1L;
     private static final String SUCCESS = "success";
     private static final String ERROR   = "error";
-
+    
+    // Injectam customerService prin spring: 
     @ManagedProperty(value="#{CustomerService}")
     CustomerService customerService;
 
     List<Customer> customerList;
+    
+    @PostConstruct
+    public void initialize() {
+    	
+        //Persons
+	 customerList = new ArrayList<Customer>();
+	 customerList.addAll(customerService.getCustomers());
+    }
 
     private int id;
     private String name;
@@ -46,7 +60,19 @@ public class CustomerManagedBean implements Serializable {
             customer.setId(getId());
             customer.setName(getName());
             customer.setSurname(getSurname());
-            getCustomerService().addCustomer(customer);
+            customerService.addCustomer(customer);
+            
+            /// GENERAZA EROAREA 
+//            Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.security.authentication.dao.DaoAuthenticationProvider#0': Cannot resolve reference to bean 'customUserDetailsService' while setting bean property 'userDetailsService'; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No bean named 'customUserDetailsService' is defined
+//        	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:329)
+//        	at org.spr
+//            boolean existingCustomer = getCustomerService().getCustomerById(getId()) != null;
+//            if (!existingCustomer){
+//            	getCustomerService().addCustomer(customer);
+//			}
+//			else {
+//				getCustomerService().updateCustomer(customer);
+//			}
             reset();
             return SUCCESS;
         } catch (DataAccessException e) {
