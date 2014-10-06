@@ -17,49 +17,20 @@ import spring.model.Customer;
  * @author mariusa
  *
  */
-@Service("CustomerService")
-@Transactional(readOnly = true)
-public class CustomerService {
+public interface CustomerService {
 
-    @Autowired
-    CustomerDAO customerDAO;
+    public void addCustomer(Customer customer);
 
-    /*** Annotation of applying method level Spring Security ***/
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Transactional(readOnly = false)
-    public void addCustomer(Customer customer) {
-    	if (getCustomerById(customer.getId()) == null) {
-    		getCustomerDAO().addCustomer(customer);
-    	}
-    	else {
-    		getCustomerDAO().updateCustomer(customer);
-    	}
-    }
+    public void deleteCustomer(Customer customer);
 
-    @Transactional(readOnly = false)
-    public void deleteCustomer(Customer customer) {
-        getCustomerDAO().deleteCustomer(customer);
-    }
+    public void updateCustomer(Customer customer);
 
-    @Transactional(readOnly = false)
-    public void updateCustomer(Customer customer) {
-        getCustomerDAO().updateCustomer(customer);
-    }
+    public Customer getCustomerById(int id);
 
-    public Customer getCustomerById(int id) {
-        return getCustomerDAO().getCustomerById(id);
-    }
+    public List<Customer> getCustomers();
 
-    public List<Customer> getCustomers() {
-        return getCustomerDAO().getCustomers();
-    }
+    public CustomerDAO getCustomerDAO();
 
-    public CustomerDAO getCustomerDAO() {
-        return customerDAO;
-    }
-
-    public void setCustomerDAO(CustomerDAO customerDAO) {
-        this.customerDAO = customerDAO;
-    }
+    public void setCustomerDAO(CustomerDAO customerDAO);
  
 }
